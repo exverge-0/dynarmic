@@ -453,28 +453,29 @@ elseif (APPLE)
         message(STATUS "mach/mach_exc.defs location: ${MACH_EXC_DEFS_DIR}")
         execute_process(
             COMMAND
-                mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/backend/x64/mig"
+                mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64"
             COMMAND
                 mig
                 -arch x86_64
-                -user "${CMAKE_CURRENT_BINARY_DIR}/backend/x64/mig/mach_exc_user.c"
-                -header "${CMAKE_CURRENT_BINARY_DIR}/backend/x64/mig/mach_exc_user.h"
-                -server "${CMAKE_CURRENT_BINARY_DIR}/backend/x64/mig/mach_exc_server.c"
-                -sheader "${CMAKE_CURRENT_BINARY_DIR}/backend/x64/mig/mach_exc_server.h"
+                -user "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64/mach_exc_user.c"
+                -header "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64/mach_exc_user.h"
+                -server "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64/mach_exc_server.c"
+                -sheader "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64/mach_exc_server.h"
                 "${MACH_EXC_DEFS_DIR}/mach/mach_exc.defs"
         )
         execute_process(
             COMMAND
-                mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/backend/arm64/mig"
+                mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64"
             COMMAND
                 mig
                 -arch arm64
-                -user "${CMAKE_CURRENT_BINARY_DIR}/backend/arm64/mig/mach_exc_user.c"
-                -header "${CMAKE_CURRENT_BINARY_DIR}/backend/arm64/mig/mach_exc_user.h"
-                -server "${CMAKE_CURRENT_BINARY_DIR}/backend/arm64/mig/mach_exc_server.c"
-                -sheader "${CMAKE_CURRENT_BINARY_DIR}/backend/arm64/mig/mach_exc_server.h"
+                -user "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64/mach_exc_user.c"
+                -header "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64/mach_exc_user.h"
+                -server "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64/mach_exc_server.c"
+                -sheader "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64/mach_exc_server.h"
                 "${MACH_EXC_DEFS_DIR}/mach/mach_exc.defs"
         )
+        target_include_directories(dynarmic PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/backend")
         target_sources(dynarmic PRIVATE
             backend/exception_handler_macos.cpp
             backend/exception_handler_macos_mig.c
@@ -496,7 +497,6 @@ target_include_directories(dynarmic PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
-target_include_directories(dynarmic PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/..")
 set_target_properties(dynarmic PROPERTIES
     VERSION ${dynarmic_VERSION}
     SOVERSION ${dynarmic_VERSION_MAJOR}.${dynarmic_VERSION_MINOR}

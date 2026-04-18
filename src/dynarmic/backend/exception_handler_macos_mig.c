@@ -6,9 +6,9 @@
 #include <mcl/macro/architecture.hpp>
 
 #if defined(MCL_ARCHITECTURE_X86_64)
-#    include "dynarmic/backend/x64/mig/mach_exc_server.c"
+#    include <mig/x64/mach_exc_server.c>
 #elif defined(MCL_ARCHITECTURE_ARM64)
-#    include "dynarmic/backend/arm64/mig/mach_exc_server.c"
+#    include <mig/arm64/mach_exc_server.c>
 #else
 #    error "Invalid architecture"
 #endif

@@ -26,7 +26,7 @@
 
 #    include "dynarmic/backend/x64/block_of_code.h"
 #    define mig_external extern "C"
-#    include "dynarmic/backend/x64/mig/mach_exc_server.h"
+#    include <mig/x64/mach_exc_server.h>
 
 #    define THREAD_STATE x86_THREAD_STATE64
 #    define THREAD_STATE_COUNT x86_THREAD_STATE64_COUNT
@@ -37,7 +37,7 @@ using dynarmic_thread_state_t = x86_thread_state64_t;
 
 #    include <oaknut/code_block.hpp>
 #    define mig_external extern "C"
-#    include "dynarmic/backend/arm64/mig/mach_exc_server.h"
+#    include <mig/arm64/mach_exc_server.h>
 
 #    define THREAD_STATE ARM_THREAD_STATE64
 #    define THREAD_STATE_COUNT ARM_THREAD_STATE64_COUNT
