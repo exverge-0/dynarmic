@@ -97,7 +97,7 @@ void SpinLockImpl::Initialize() noexcept {
     Xbyak::Reg64 const ABI_PARAM1 = Backend::X64::HostLocToReg64(Backend::X64::ABI_PARAM1);
     code.align();
     lock = code.getCurr<void (*)(volatile int*)>();
-    EmitSpinLockLock(code, code.dword[ABI_PARAM1], code.eax, false);
+    EmitSpinLockLock(code, ABI_PARAM1, code.eax, false);
     code.ret();
 
     code.align();
