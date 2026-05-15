@@ -346,7 +346,7 @@ const void* EmitWriteMemoryMov(BlockOfCode& code, const Xbyak::RegExp& addr, int
 template<typename UserConfig>
 void EmitExclusiveLock(BlockOfCode& code, const UserConfig& conf, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp) {
     if (!conf.HasOptimization(OptimizationFlag::Unsafe_IgnoreGlobalMonitor)) {
-        code.move(ptr, std::bit_cast<u64>(std::addressof(conf.global_monitor->lock.storage)));
+        code.mov(ptr, std::bit_cast<u64>(std::addressof(conf.global_monitor->lock.storage)));
         EmitSpinLockLock(code, ptr, tmp, code.HasHostFeature(HostFeature::WAITPKG));
     }
 }
@@ -354,7 +354,7 @@ void EmitExclusiveLock(BlockOfCode& code, const UserConfig& conf, Xbyak::Reg64 p
 template<typename UserConfig>
 void EmitExclusiveUnlock(BlockOfCode& code, const UserConfig& conf, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp) {
     if (!conf.HasOptimization(OptimizationFlag::Unsafe_IgnoreGlobalMonitor)) {
-        code.move(ptr, std::bit_cast<u64>(std::addressof(conf.global_monitor->lock.storage)));
+        code.mov(ptr, std::bit_cast<u64>(std::addressof(conf.global_monitor->lock.storage)));
         EmitSpinLockUnlock(code, ptr, tmp);
     }
 }

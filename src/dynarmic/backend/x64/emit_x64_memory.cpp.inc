@@ -383,7 +383,7 @@ void AxxEmitX64::EmitExclusiveReadMemoryInline(AxxEmitContext& ctx, IR::Inst* in
     code.mov(tmp, std::bit_cast<u64>(conf.global_monitor->exclusive_values.data() + conf.processor_id));
     EmitWriteMemoryMov<bitsize>(code, tmp, value_idx, false);
 
-    EmitExclusiveUnlock(code, conf, tmp2.cvt32());
+    EmitExclusiveUnlock(code, conf, tmp, tmp2.cvt32());
 
     if constexpr (bitsize == 128) {
         ctx.reg_alloc.DefineValue(code, inst, Xbyak::Xmm{value_idx});
@@ -519,7 +519,7 @@ void AxxEmitX64::EmitExclusiveWriteMemoryInline(AxxEmitContext& ctx, IR::Inst* i
     }
 
     code.L(*end);
-    EmitExclusiveUnlock(code, conf, eax);
+    EmitExclusiveUnlock(code, conf, tmp, eax);
     ctx.reg_alloc.DefineValue(code, inst, status);
     EmitCheckMemoryAbort(ctx, inst);
 }
