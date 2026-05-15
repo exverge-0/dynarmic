@@ -72,9 +72,9 @@ void EmitSpinLockLock(Xbyak::CodeGenerator& code, Xbyak::Reg64 ptr, Xbyak::Reg32
 }
 
 // ptr operand must be a dword[ptr]
-void EmitSpinLockUnlock(Xbyak::CodeGenerator& code, Xbyak::Address ptr, Xbyak::Reg32 tmp) {
+void EmitSpinLockUnlock(Xbyak::CodeGenerator& code, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp) {
     code.xor_(tmp, tmp);
-    code.xchg(ptr, tmp);
+    code.xchg(code.dword[ptr], tmp);
     code.mfence();
 }
 
@@ -102,7 +102,7 @@ void SpinLockImpl::Initialize() noexcept {
 
     code.align();
     unlock = code.getCurr<void (*)(volatile int*)>();
-    EmitSpinLockUnlock(code, code.dword[ABI_PARAM1], code.eax);
+    EmitSpinLockUnlock(code, ABI_PARAM1, code.eax);
     code.ret();
 }
 

@@ -12,7 +12,7 @@
 
 namespace Dynarmic {
 
-void EmitSpinLockLock(Xbyak::CodeGenerator& code, Xbyak::Address ptr, Xbyak::Reg32 tmp, bool waitpkg);
-void EmitSpinLockUnlock(Xbyak::CodeGenerator& code, Xbyak::Address ptr, Xbyak::Reg32 tmp);
+void EmitSpinLockLock(Xbyak::CodeGenerator& code, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp, bool waitpkg);
+void EmitSpinLockUnlock(Xbyak::CodeGenerator& code, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp);
 
 }  // namespace Dynarmic
