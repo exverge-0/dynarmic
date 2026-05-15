@@ -343,7 +343,7 @@ void AxxEmitX64::EmitExclusiveReadMemoryInline(AxxEmitContext& ctx, IR::Inst* in
 
     const auto wrapped_fn = read_fallbacks[std::make_tuple(ordered, bitsize, vaddr.getIdx(), value_idx)];
 
-    EmitExclusiveLock(code, conf, tmp2.cvt32());
+    EmitExclusiveLock(code, conf, tmp, tmp2.cvt32());
 
     code.mov(code.byte[code.ABI_JIT_PTR + offsetof(AxxJitState, exclusive_state)], u8(1));
     code.mov(tmp, std::bit_cast<u64>(conf.global_monitor->exclusive_addresses.data() + conf.processor_id));
@@ -425,7 +425,7 @@ void AxxEmitX64::EmitExclusiveWriteMemoryInline(AxxEmitContext& ctx, IR::Inst* i
 
     const auto wrapped_fn = exclusive_write_fallbacks[std::make_tuple(ordered, bitsize, vaddr.getIdx(), value.getIdx())];
 
-    EmitExclusiveLock(code, conf, tmp2.cvt32());
+    EmitExclusiveLock(code, conf, tmp, tmp2.cvt32());
 
     SharedLabel end = ctx.GenSharedLabel();
 

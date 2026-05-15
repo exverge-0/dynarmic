@@ -25,19 +25,26 @@ namespace Dynarmic {
 /// @brief Emits a lock path for a given spinlock
 /// @arg ptr Operand must be a dword[ptr]
 /// @arg waitpkg Whetever or not the "UMWAIT" instruction can be used
-void EmitSpinLockLock(Xbyak::CodeGenerator& code, Xbyak::Address ptr, Xbyak::Reg32 tmp, bool waitpkg) {
-    // TODO: this is because we lack regalloc - so better to be safe :(
+void EmitSpinLockLock(Xbyak::CodeGenerator& code, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp, bool waitpkg) {
+    Xbyak::Label start, loop;
+    code.jmp(start, code.T_NEAR);
+    code.L(loop);
+
     if (waitpkg) {
-        Xbyak::Label start, loop;
-        code.jmp(start, code.T_NEAR);
-        code.L(loop);
-        code.push(Xbyak::util::eax);
-        code.push(Xbyak::util::ebx);
-        code.push(Xbyak::util::edx);
+        // TODO: this is because we lack regalloc - so better to be safe :(
+        code.push(Xbyak::util::rax);
+        code.push(Xbyak::util::rbx);
+        code.push(Xbyak::util::rdx);
         // TODO: This clobbers EAX and EDX did we tell the regalloc?
         // ARM ptr for address-monitoring
-        code.mov(Xbyak::util::eax, ptr);
-        code.umonitor(Xbyak::util::eax);
+
+        // XBYAK BUG: code.umonitor(ptr); see issue #255
+        // replace once xbyak has been fixed
+        code.db(0xF3);
+        if (ptr.getIdx() >= 8) code.db(0x41);
+        code.db(0x0F); code.db(0xAE);
+        code.db(uint8_t((3 << 6) | ((6 & 7) << 3) | (ptr.getIdx() & 7)));
+
         // tmp.bit[0] = 0: C0.1 | Slow Wakup | Better Savings
         // tmp.bit[0] = 1: C0.2 | Fast Wakup | Lesser Savings
         // edx:eax is implicitly used as a 64-bit deadline timestamp
@@ -51,25 +58,17 @@ void EmitSpinLockLock(Xbyak::CodeGenerator& code, Xbyak::Address ptr, Xbyak::Reg
         code.umwait(Xbyak::util::ebx);
         // CF == 1 if we hit the OS-timeout in IA32_UMWAIT_CONTROL without a write
         // CF == 0 if we exited the wait for any other reason
-        code.pop(Xbyak::util::edx);
-        code.pop(Xbyak::util::ebx);
-        code.pop(Xbyak::util::eax);
-        code.L(start);
-        code.mov(tmp, 1);
-        /*code.lock();*/ code.xchg(ptr, tmp);
-        code.test(tmp, tmp);
-        code.jnz(loop, code.T_NEAR);
+        code.pop(Xbyak::util::rdx);
+        code.pop(Xbyak::util::rbx);
+        code.pop(Xbyak::util::rax);
     } else {
-        Xbyak::Label start, loop;
-        code.jmp(start, code.T_NEAR);
-        code.L(loop);
         code.pause();
-        code.L(start);
-        code.mov(tmp, 1);
-        /*code.lock();*/ code.xchg(ptr, tmp);
-        code.test(tmp, tmp);
-        code.jnz(loop, code.T_NEAR);
     }
+    code.L(start);
+    code.mov(tmp, 1);
+    /*code.lock();*/ code.xchg(code.dword[ptr], tmp);
+    code.test(tmp, tmp);
+    code.jnz(loop, code.T_NEAR);
 }
 
 // ptr operand must be a dword[ptr]

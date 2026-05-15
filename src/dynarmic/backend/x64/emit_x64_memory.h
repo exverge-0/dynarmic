@@ -344,18 +344,18 @@ const void* EmitWriteMemoryMov(BlockOfCode& code, const Xbyak::RegExp& addr, int
 }
 
 template<typename UserConfig>
-void EmitExclusiveLock(BlockOfCode& code, const UserConfig& conf, Xbyak::Reg32 tmp) {
+void EmitExclusiveLock(BlockOfCode& code, const UserConfig& conf, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp) {
     if (!conf.HasOptimization(OptimizationFlag::Unsafe_IgnoreGlobalMonitor)) {
-        u64 const slp = std::bit_cast<u64>(std::addressof(conf.global_monitor->lock.storage));
-        EmitSpinLockLock(code, dword[slp], tmp, code.HasHostFeature(HostFeature::WAITPKG));
+        code.move(ptr, std::bit_cast<u64>(std::addressof(conf.global_monitor->lock.storage)));
+        EmitSpinLockLock(code, ptr, tmp, code.HasHostFeature(HostFeature::WAITPKG));
     }
 }
 
 template<typename UserConfig>
-void EmitExclusiveUnlock(BlockOfCode& code, const UserConfig& conf, Xbyak::Reg32 tmp) {
+void EmitExclusiveUnlock(BlockOfCode& code, const UserConfig& conf, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp) {
     if (!conf.HasOptimization(OptimizationFlag::Unsafe_IgnoreGlobalMonitor)) {
-        u64 const slp = std::bit_cast<u64>(std::addressof(conf.global_monitor->lock.storage));
-        EmitSpinLockUnlock(code, dword[slp], tmp);
+        code.move(ptr, std::bit_cast<u64>(std::addressof(conf.global_monitor->lock.storage)));
+        EmitSpinLockUnlock(code, ptr, tmp);
     }
 }
 
