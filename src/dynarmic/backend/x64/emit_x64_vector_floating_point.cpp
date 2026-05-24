@@ -11,6 +11,7 @@
 #include <tuple>
 #include <type_traits>
 #include <utility>
+#include <smmintrin.h>
 
 #include "dynarmic/common/assert.h"
 #include "dynarmic/mcl/function_info.hpp"
@@ -1652,25 +1653,23 @@ static void EmitFPVectorRoundIntThunk(VectorArray<FPT>& output, const VectorArra
 
 template<size_t fsize>
 void EmitFPVectorRoundInt(BlockOfCode& code, EmitContext& ctx, IR::Inst* inst) {
+    //auto args = ctx.reg_alloc.GetArgumentInfo(inst);
     const auto rounding = FP::RoundingMode(inst->GetArg(1).GetU8());
     const bool exact = inst->GetArg(2).GetU1();
-
     if constexpr (fsize != 16) {
         if (code.HasHostFeature(HostFeature::SSE41) && rounding != FP::RoundingMode::ToNearest_TieAwayFromZero && !exact) {
-            const u8 round_imm = [&]() -> u8 {
+            const u8 round_imm = [rounding]() -> u8 {
                 switch (rounding) {
-                case FP::RoundingMode::ToNearest_TieEven: return 0b00;
-                case FP::RoundingMode::TowardsPlusInfinity: return 0b10;
-                case FP::RoundingMode::TowardsMinusInfinity: return 0b01;
-                case FP::RoundingMode::TowardsZero: return 0b11;
+                case FP::RoundingMode::ToNearest_TieEven: return _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC;
+                case FP::RoundingMode::TowardsPlusInfinity: return _MM_FROUND_TO_POS_INF | _MM_FROUND_NO_EXC;
+                case FP::RoundingMode::TowardsMinusInfinity: return _MM_FROUND_TO_NEG_INF | _MM_FROUND_NO_EXC;
+                case FP::RoundingMode::TowardsZero: return _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC;
                 default: UNREACHABLE();
                 }
             }();
-
-            EmitTwoOpVectorOperation<fsize, DefaultIndexer, 3>(code, ctx, inst, [&](const Xbyak::Xmm& result, const Xbyak::Xmm& xmm_a) {
+            EmitTwoOpVectorOperation<fsize, DefaultIndexer, 3>(code, ctx, inst, [&code, round_imm](const Xbyak::Xmm result, const Xbyak::Xmm xmm_a) {
                 FCODE(roundp)(result, xmm_a, round_imm);
             });
-
             return;
         }
     }
@@ -1678,33 +1677,21 @@ void EmitFPVectorRoundInt(BlockOfCode& code, EmitContext& ctx, IR::Inst* inst) {
     // Do not make a LUT out of this, let the compiler do it's thing
     using FPT = mcl::unsigned_integer_of_size<fsize>;
     switch (rounding) {
-    case FP::RoundingMode::ToNearest_TieEven:
-        exact
-            ? EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::ToNearest_TieEven, true>)
-            : EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::ToNearest_TieEven, false>);
-        break;
-    case FP::RoundingMode::TowardsPlusInfinity:
-        exact
-            ? EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::TowardsPlusInfinity, true>)
-            : EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::TowardsPlusInfinity, false>);
-        break;
-    case FP::RoundingMode::TowardsMinusInfinity:
-        exact
-            ? EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::TowardsMinusInfinity, true>)
-            : EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::TowardsMinusInfinity, false>);
-        break;
-    case FP::RoundingMode::TowardsZero:
-        exact
-            ? EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::TowardsZero, true>)
-            : EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::TowardsZero, false>);
-        break;
-    case FP::RoundingMode::ToNearest_TieAwayFromZero:
-        exact
-            ? EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::ToNearest_TieAwayFromZero, true>)
-            : EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::ToNearest_TieAwayFromZero, false>);
-        break;
-    default:
-        UNREACHABLE();
+#define ROUND_LIST \
+    ROUND_ELEM(ToNearest_TieEven) \
+    ROUND_ELEM(TowardsPlusInfinity) \
+    ROUND_ELEM(TowardsMinusInfinity) \
+    ROUND_ELEM(TowardsZero) \
+    ROUND_ELEM(ToNearest_TieAwayFromZero)
+#define ROUND_ELEM(name) \
+    case FP::RoundingMode::name: \
+        return exact \
+            ? EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::name, true>) \
+            : EmitTwoOpFallback<3>(code, ctx, inst, EmitFPVectorRoundIntThunk<FPT, FP::RoundingMode::name, false>);
+ROUND_LIST
+#undef ROUND_ELEM
+#undef ROUND_LIST
+    default: UNREACHABLE();
     }
 }
 

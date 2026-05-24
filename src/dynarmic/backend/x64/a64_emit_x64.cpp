@@ -224,7 +224,7 @@ void A64EmitX64::GenTerminalHandlers() {
         terminal_handler_fast_dispatch_hint = code.getCurr<const void*>();
         calculate_location_descriptor();
         code.L(rsb_cache_miss);
-        code.mov(r8, reinterpret_cast<u64>(fast_dispatch_table.data()));
+        code.mov(r8, u64(fast_dispatch_table.data()));
         //code.mov(r12, qword[code.ABI_JIT_PTR + offsetof(A64JitState, pc)]);
         code.mov(r12, rbx);
         if (code.HasHostFeature(HostFeature::SSE42)) {
@@ -244,7 +244,7 @@ void A64EmitX64::GenTerminalHandlers() {
 
         code.align();
         fast_dispatch_table_lookup = code.getCurr<FastDispatchEntry& (*)(u64)>();
-        code.mov(code.ABI_PARAM2, reinterpret_cast<u64>(fast_dispatch_table.data()));
+        code.mov(code.ABI_PARAM2, u64(fast_dispatch_table.data()));
         if (code.HasHostFeature(HostFeature::SSE42)) {
             code.crc32(code.ABI_PARAM1, code.ABI_PARAM2);
         }
@@ -339,7 +339,11 @@ void A64EmitX64::EmitA64GetS(A64EmitContext& ctx, IR::Inst* inst) {
     const auto addr = qword[code.ABI_JIT_PTR + offsetof(A64JitState, vec) + sizeof(u64) * 2 * static_cast<size_t>(vec)];
 
     const Xbyak::Xmm result = ctx.reg_alloc.ScratchXmm(code);
-    code.movd(result, addr);
+    if (code.HasHostFeature(HostFeature::AVX)) {
+        code.vmovd(result, addr);
+    } else if (code.HasHostFeature(HostFeature::AVX)) {
+        code.movd(result, addr);
+    }
     ctx.reg_alloc.DefineValue(code, inst, result);
 }
 
@@ -348,7 +352,11 @@ void A64EmitX64::EmitA64GetD(A64EmitContext& ctx, IR::Inst* inst) {
     const auto addr = qword[code.ABI_JIT_PTR + offsetof(A64JitState, vec) + sizeof(u64) * 2 * static_cast<size_t>(vec)];
 
     const Xbyak::Xmm result = ctx.reg_alloc.ScratchXmm(code);
-    code.movq(result, addr);
+    if (code.HasHostFeature(HostFeature::AVX)) {
+        code.vmovd(result, addr);
+    } else {
+        code.movq(result, addr);
+    }
     ctx.reg_alloc.DefineValue(code, inst, result);
 }
 
@@ -357,7 +365,11 @@ void A64EmitX64::EmitA64GetQ(A64EmitContext& ctx, IR::Inst* inst) {
     const auto addr = xword[code.ABI_JIT_PTR + offsetof(A64JitState, vec) + sizeof(u64) * 2 * static_cast<size_t>(vec)];
 
     const Xbyak::Xmm result = ctx.reg_alloc.ScratchXmm(code);
-    code.movaps(result, addr);
+    if (code.HasHostFeature(HostFeature::AVX)) {
+        code.vmovaps(result, addr);
+    } else {
+        code.movaps(result, addr);
+    }
     ctx.reg_alloc.DefineValue(code, inst, result);
 }
 

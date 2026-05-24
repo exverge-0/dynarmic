@@ -7,7 +7,6 @@
  */
 
 #include <string>
-
 #include <fmt/format.h>
 
 #ifdef DYNARMIC_USE_LLVM
@@ -16,7 +15,6 @@
 #endif
 
 #include "dynarmic/common/assert.h"
-#include <bit>
 #include "dynarmic/common/common_types.h"
 
 #include "dynarmic/common/llvm_disassemble.h"
@@ -30,7 +28,7 @@ std::string DisassembleX64(const void* begin, const void* end) {
     LLVMInitializeX86TargetMC();
     LLVMInitializeX86Disassembler();
     LLVMDisasmContextRef llvm_ctx = LLVMCreateDisasm("x86_64", nullptr, 0, nullptr, nullptr);
-    LLVMSetDisasmOptions(llvm_ctx, LLVMDisassembler_Option_AsmPrinterVariant);
+    LLVMSetDisasmOptions(llvm_ctx, LLVMDisassembler_Option_AsmPrinterVariant | LLVMDisassembler_Option_PrintLatency);
 
     const u8* pos = reinterpret_cast<const u8*>(begin);
     size_t remaining = reinterpret_cast<size_t>(end) - reinterpret_cast<size_t>(pos);

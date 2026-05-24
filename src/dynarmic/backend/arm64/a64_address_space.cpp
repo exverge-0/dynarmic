@@ -135,9 +135,12 @@ static void* EmitExclusiveWriteCallTrampoline(oaknut::CodeGenerator& code, const
     oaknut::Label l_addr, l_this;
 
     auto fn = [](const A64::UserConfig& conf, A64::VAddr vaddr, T value) -> u32 {
-        return conf.global_monitor->DoExclusiveOperation<T>(conf.processor_id, vaddr, [&](T expected) -> bool {
-            return (conf.callbacks->*callback)(vaddr, value, expected);
-        }) ? 0 : 1;
+        return conf.global_monitor->DoExclusiveOperation<T>(conf.processor_id, vaddr,
+                                                            [&](T expected) -> bool {
+                                                                return (conf.callbacks->*callback)(vaddr, value, expected);
+                                                            })
+                 ? 0
+                 : 1;
     };
 
     void* target = code.xptr<void*>();
@@ -297,9 +300,12 @@ static void* EmitExclusiveWrite128CallTrampoline(oaknut::CodeGenerator& code, co
     oaknut::Label l_addr, l_this;
 
     auto fn = [](const A64::UserConfig& conf, A64::VAddr vaddr, Vector value) -> u32 {
-        return conf.global_monitor->DoExclusiveOperation<Vector>(conf.processor_id, vaddr, [&](Vector expected) -> bool {
-            return conf.callbacks->MemoryWriteExclusive128(vaddr, value, expected);
-        }) ? 0 : 1;
+        return conf.global_monitor->DoExclusiveOperation<Vector>(conf.processor_id, vaddr,
+                                                                 [&](Vector expected) -> bool {
+                                                                     return conf.callbacks->MemoryWriteExclusive128(vaddr, value, expected);
+                                                                 })
+                 ? 0
+                 : 1;
     };
 
     void* target = code.xptr<void*>();

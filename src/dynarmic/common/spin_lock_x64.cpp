@@ -22,9 +22,6 @@ static const auto default_cg_mode = nullptr; //Allow RWE
 
 namespace Dynarmic {
 
-/// @brief Emits a lock path for a given spinlock
-/// @arg ptr Operand must be a dword[ptr]
-/// @arg waitpkg Whetever or not the "UMWAIT" instruction can be used
 void EmitSpinLockLock(Xbyak::CodeGenerator& code, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp, bool waitpkg) {
     Xbyak::Label start, loop;
     code.jmp(start, code.T_NEAR);
@@ -71,7 +68,6 @@ void EmitSpinLockLock(Xbyak::CodeGenerator& code, Xbyak::Reg64 ptr, Xbyak::Reg32
     code.jnz(loop, code.T_NEAR);
 }
 
-// ptr operand must be a dword[ptr]
 void EmitSpinLockUnlock(Xbyak::CodeGenerator& code, Xbyak::Reg64 ptr, Xbyak::Reg32 tmp) {
     code.xor_(tmp, tmp);
     code.xchg(code.dword[ptr], tmp);
@@ -99,7 +95,6 @@ void SpinLockImpl::Initialize() noexcept {
     lock = code.getCurr<void (*)(volatile int*)>();
     EmitSpinLockLock(code, ABI_PARAM1, code.eax, false);
     code.ret();
-
     code.align();
     unlock = code.getCurr<void (*)(volatile int*)>();
     EmitSpinLockUnlock(code, ABI_PARAM1, code.eax);

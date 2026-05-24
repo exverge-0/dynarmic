@@ -9,11 +9,6 @@ add_library(dynarmic STATIC
     mcl/intrusive_list.hpp
     mcl/is_instance_of_template.hpp
 
-    # unsync
-    common/common_types.h
-    common/assert.cpp
-    common/assert.h
-
     backend/block_range_information.cpp
     backend/block_range_information.h
     backend/exception_handler.h
@@ -174,6 +169,8 @@ if ("x86_64" IN_LIST ARCHITECTURE)
         backend/x64/emit_x64_vector.cpp
         backend/x64/emit_x64_vector_floating_point.cpp
         backend/x64/emit_x64_vector_saturation.cpp
+        backend/x64/exclusive_monitor.cpp
+        backend/x64/exclusive_monitor_friend.h
         backend/x64/host_feature.h
         backend/x64/hostloc.h
         backend/x64/jitstate_info.h
@@ -234,6 +231,7 @@ if ("arm64" IN_LIST ARCHITECTURE)
         backend/arm64/emit_arm64_vector_floating_point.cpp
         backend/arm64/emit_arm64_vector_saturation.cpp
         backend/arm64/emit_context.h
+        backend/arm64/exclusive_monitor.cpp
         backend/arm64/fastmem.h
         backend/arm64/fpsr_manager.cpp
         backend/arm64/fpsr_manager.h
@@ -280,6 +278,7 @@ if ("riscv64" IN_LIST ARCHITECTURE)
         backend/riscv64/emit_riscv64_vector.cpp
         backend/riscv64/emit_riscv64.cpp
         backend/riscv64/emit_riscv64.h
+        backend/riscv64/exclusive_monitor.cpp
         backend/riscv64/reg_alloc.cpp
         backend/riscv64/reg_alloc.h
         backend/riscv64/stack_layout.h
