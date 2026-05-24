@@ -353,7 +353,7 @@ void A64EmitX64::EmitA64GetD(A64EmitContext& ctx, IR::Inst* inst) {
 
     const Xbyak::Xmm result = ctx.reg_alloc.ScratchXmm(code);
     if (code.HasHostFeature(HostFeature::AVX)) {
-        code.vmovd(result, addr);
+        code.vmovq(result, addr);
     } else {
         code.movq(result, addr);
     }
