@@ -9,7 +9,7 @@
 #include <type_traits>
 #include <bitset>
 #include <initializer_list>
-#include "dynarmic/common/assert.h"
+#include "dynarmic/common/logging.h"
 
 // xbyak hates human beings
 #ifdef __GNUC__
