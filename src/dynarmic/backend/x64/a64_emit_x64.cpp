@@ -365,11 +365,7 @@ void A64EmitX64::EmitA64GetQ(A64EmitContext& ctx, IR::Inst* inst) {
     const auto addr = xword[code.ABI_JIT_PTR + offsetof(A64JitState, vec) + sizeof(u64) * 2 * static_cast<size_t>(vec)];
 
     const Xbyak::Xmm result = ctx.reg_alloc.ScratchXmm(code);
-    if (code.HasHostFeature(HostFeature::AVX)) {
-        code.vmovaps(result, addr);
-    } else {
-        code.movaps(result, addr);
-    }
+    code.movaps(result, addr);
     ctx.reg_alloc.DefineValue(code, inst, result);
 }
 
