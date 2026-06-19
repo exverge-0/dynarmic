@@ -50,7 +50,7 @@ u64 FPRoundInt(FPT op, FPCR fpcr, RoundingMode rounding, bool exact, FPSR& fpsr)
         return op;
     }
 
-    u64 int_result = sign ? Safe::Negate<u64>(value.mantissa) : u64(value.mantissa);
+    u64 int_result = sign ? Safe::Negate<u64>(value.mantissa) : static_cast<u64>(value.mantissa);
     const ResidualError error = ResidualErrorOnRightShift(int_result, -exponent);
     int_result = Safe::ArithmeticShiftLeft(int_result, exponent);
 

@@ -295,6 +295,34 @@ if ("riscv64" IN_LIST ARCHITECTURE)
     message(WARNING "TODO: Incomplete frontend for this host architecture")
 endif()
 
+if ("loongarch64" IN_LIST ARCHITECTURE)
+    target_link_libraries(dynarmic PRIVATE lagoon::lagoon)
+
+    target_sources(dynarmic PRIVATE
+        backend/loongarch64/abi.h
+        backend/loongarch64/a32_jitstate.cpp
+        backend/loongarch64/a32_jitstate.h
+        backend/loongarch64/code_block.h
+        backend/loongarch64/emit_context.h
+        backend/loongarch64/emit_loongarch64.cpp
+        backend/loongarch64/emit_loongarch64.h
+        backend/loongarch64/emit_loongarch64_a32.cpp
+        backend/loongarch64/emit_loongarch64_data_processing.cpp
+        backend/loongarch64/a32_address_space.cpp
+        backend/loongarch64/a32_address_space.h
+        backend/loongarch64/a32_interface.cpp
+        backend/loongarch64/a64_interface.cpp
+        backend/loongarch64/exclusive_monitor.cpp
+        backend/loongarch64/reg_alloc.cpp
+        backend/loongarch64/reg_alloc.h
+        backend/loongarch64/stack_layout.h
+        backend/loongarch64/lagoon_cpp.h
+
+        common/spin_lock_loongarch64.cpp
+    )
+    message(WARNING "TODO: Incomplete frontend for this host architecture")
+endif()
+
 if (WIN32)
     target_sources(dynarmic PRIVATE backend/exception_handler_windows.cpp)
 elseif (APPLE)

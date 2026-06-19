@@ -28,7 +28,7 @@ std::string DisassembleX64(const void* begin, const void* end) {
     LLVMInitializeX86TargetMC();
     LLVMInitializeX86Disassembler();
     LLVMDisasmContextRef llvm_ctx = LLVMCreateDisasm("x86_64", nullptr, 0, nullptr, nullptr);
-    LLVMSetDisasmOptions(llvm_ctx, LLVMDisassembler_Option_AsmPrinterVariant | LLVMDisassembler_Option_PrintLatency);
+    LLVMSetDisasmOptions(llvm_ctx, LLVMDisassembler_Option_AsmPrinterVariant);
 
     const u8* pos = reinterpret_cast<const u8*>(begin);
     size_t remaining = reinterpret_cast<size_t>(end) - reinterpret_cast<size_t>(pos);
