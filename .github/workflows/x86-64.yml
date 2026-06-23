@@ -1,6 +1,6 @@
 name: x86-64
 
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 env:
   BUILD_TYPE: Release
@@ -9,14 +9,13 @@ jobs:
   build:
     strategy:
       matrix:
-        os: [ windows-latest, ubuntu-latest, macos-latest ]
-        cpu_detection: [ 0, 1 ]
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        cpu_detection: [0, 1]
       fail-fast: false
 
     runs-on: ${{matrix.os}}
 
     steps:
-
       - name: Install build dependencies
         if: ${{matrix.os == 'ubuntu-latest'}}
         run: sudo apt-get install llvm ninja-build
@@ -28,13 +27,9 @@ jobs:
           echo "/usr/local/opt/llvm/bin" >> $GITHUB_PATH
 
       - name: Checkout dynarmic repo
-        uses: actions/checkout@v2
-
-      - name: Checkout ext-boost repo
-        uses: actions/checkout@v2
         with:
-          repository: MerryMage/ext-boost
-          path: externals/ext-boost
+          submodules: "recursive"
+        uses: actions/checkout@v2
 
       - name: Checkout unicorn repo
         if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}

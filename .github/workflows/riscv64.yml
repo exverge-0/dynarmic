@@ -1,6 +1,6 @@
 name: RISCV64
 
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 env:
   BUILD_TYPE: Release
@@ -9,13 +9,12 @@ jobs:
   build_linux:
     strategy:
       matrix:
-        platform: [ linux ]
+        platform: [linux]
       fail-fast: false
 
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Install build dependencies
         run: >
           sudo apt-get update &&
@@ -26,17 +25,13 @@ jobs:
           qemu-user
 
       - name: Checkout dynarmic repo
+        with:
+          submodules: "recursive"
         uses: actions/checkout@v2
 
       - name: Ccache
         if: matrix.platform == 'linux'
         uses: hendrikmuhs/ccache-action@v1.2
-
-      - name: Checkout ext-boost repo
-        uses: actions/checkout@v2
-        with:
-          repository: MerryMage/ext-boost
-          path: externals/ext-boost
 
       - name: Configure CMake for RISCV64 (Linux)
         if: matrix.platform == 'linux'
