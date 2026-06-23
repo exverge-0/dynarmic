@@ -35,7 +35,7 @@ jobs:
         if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}
         uses: actions/checkout@v2
         with:
-          repository: MerryMage/unicorn
+          repository: unicorn-engine/unicorn
           path: externals/unicorn
 
       - name: Build unicorn
@@ -46,8 +46,8 @@ jobs:
       - name: Configure CMake
         if: ${{matrix.os == 'ubuntu-latest'}}
         env:
-          CC: gcc-10
-          CXX: g++-10
+          CC: clang
+          CXX: clang++
           CXXFLAGS: -Wp,-D_GLIBCXX_ASSERTIONS
         run: >
           cmake
