@@ -119,11 +119,6 @@ else()
         # And this in turns limits the size of a std::array.
         list(APPEND DYNARMIC_CXX_FLAGS -fbracket-depth=1024)
     endif()
-
-    if ("riscv" IN_LIST ARCHITECTURE)
-        # biscuit's macros incorrectly adds a semicolon to their macros
-        list(APPEND DYNARMIC_CXX_FLAGS -Wno-pedantic)
-    endif()
 endif()
 
 # Arch detection
@@ -156,6 +151,7 @@ if ("arm64" IN_LIST ARCHITECTURE OR DYNARMIC_TESTS)
 endif()
 
 if ("riscv" IN_LIST ARCHITECTURE)
+    list(APPEND DYNARMIC_CXX_FLAGS -Wno-pedantic)
     find_package(biscuit 0.9.1 QUIET)
 endif()
 
