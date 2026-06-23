@@ -21,7 +21,7 @@ jobs:
         run: sudo apt-get install llvm ninja-build
 
       - name: Install build dependencies
-        if: ${{matrix.os == 'macos-latest'}}
+        if: ${{matrix.os == 'macos-26-intel'}}
         run: |
           brew install llvm ninja
           echo "/usr/local/opt/llvm/bin" >> $GITHUB_PATH
@@ -32,14 +32,14 @@ jobs:
         uses: actions/checkout@v2
 
       #- name: Checkout unicorn repo
-      #  if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}
+      #  if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-26-intel'}}
       #  uses: actions/checkout@v2
       #  with:
       #    repository: unicorn-engine/unicorn
       #    path: externals/unicorn
       #
       #- name: Build unicorn
-      #  if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}
+      #  if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-26-intel'}}
       #  working-directory: externals/unicorn
       #  run: >
       #    cmake -B build -S . -GNinja -DCMAKE_BUILD_TYPE=Release &&
@@ -64,7 +64,7 @@ jobs:
         # -DLIBUNICORN_LIBRARY=${{github.workspace}}/externals/unicorn/build/libunicorn.a
 
       - name: Configure CMake
-        if: ${{matrix.os == 'macos-latest'}}
+        if: ${{matrix.os == 'macos-26-intel'}}
         run: >
           cmake
           -B ${{github.workspace}}/build
