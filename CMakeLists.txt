@@ -105,12 +105,13 @@ else()
     endif()
 
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-        # GCC produces bogus -Warray-bounds warnings from xbyak headers for code paths that are not
-        # actually reachable.  Specifically, it happens in cases where some code casts an Operand&
-        # to Address& after first checking isMEM(), and that code is inlined in a situation where
-        # GCC knows that the variable is actually a Reg64.  isMEM() will never return true for a
-        # Reg64, but GCC doesn't know that.
+        # GCC produces bogus -Warray-bounds and -Wno-stringop-overread warnings from xbyak headers
+        # for code paths that are not actually reachable.  Specifically, it happens in cases where
+        # some code casts an Operand& to Address& after first checking isMEM(), and that code is
+        # inlined in a situation where GCC knows that the variable is actually a Reg64.  isMEM()
+        # will never return true for a Reg64, but GCC doesn't know that.
         list(APPEND DYNARMIC_CXX_FLAGS -Wno-array-bounds)
+        list(APPEND DYNARMIC_CXX_FLAGS -Wno-stringop-overread)
     endif()
 
     if (CMAKE_CXX_COMPILER_ID MATCHES "[Cc]lang")
