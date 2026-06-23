@@ -31,19 +31,19 @@ jobs:
           submodules: "recursive"
         uses: actions/checkout@v2
 
-      - name: Checkout unicorn repo
-        if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}
-        uses: actions/checkout@v2
-        with:
-          repository: unicorn-engine/unicorn
-          path: externals/unicorn
+      #- name: Checkout unicorn repo
+      #  if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}
+      #  uses: actions/checkout@v2
+      #  with:
+      #    repository: unicorn-engine/unicorn
+      #    path: externals/unicorn
 
-      - name: Build unicorn
-        if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}
-        working-directory: externals/unicorn
-        run: >
-          cmake -B build -S . -GNinja -DCMAKE_BUILD_TYPE=Release &&
-          cmake --build build
+      #- name: Build unicorn
+      #  if: ${{matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'}}
+      #  working-directory: externals/unicorn
+      #  run: >
+      #    cmake -B build -S . -GNinja -DCMAKE_BUILD_TYPE=Release &&
+      #    cmake --build build
 
       - name: Configure CMake
         if: ${{matrix.os == 'ubuntu-latest'}}
@@ -57,10 +57,10 @@ jobs:
           -DBOOST_INCLUDEDIR=${{github.workspace}}/externals/ext-boost
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
           -DDYNARMIC_ENABLE_CPU_FEATURE_DETECTION=${{matrix.cpu_detection}}
-          -DDYNARMIC_TESTS_USE_UNICORN=1
+        # -DDYNARMIC_TESTS_USE_UNICORN=1
           -DDYNARMIC_USE_LLVM=1
-          -DLIBUNICORN_INCLUDE_DIR=${{github.workspace}}/externals/unicorn/include
-          -DLIBUNICORN_LIBRARY=${{github.workspace}}/externals/unicorn/build/libunicorn.a
+        # -DLIBUNICORN_INCLUDE_DIR=${{github.workspace}}/externals/unicorn/include
+        # -DLIBUNICORN_LIBRARY=${{github.workspace}}/externals/unicorn/build/libunicorn.a
           -G Ninja
 
       - name: Configure CMake
@@ -70,11 +70,12 @@ jobs:
           -B ${{github.workspace}}/build
           -DBOOST_INCLUDEDIR=${{github.workspace}}/externals/ext-boost
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+          -DDYNARMIC_USE_BUNDLED_EXTERNALS=ON
           -DDYNARMIC_ENABLE_CPU_FEATURE_DETECTION=${{matrix.cpu_detection}}
-          -DDYNARMIC_TESTS_USE_UNICORN=1
+        # -DDYNARMIC_TESTS_USE_UNICORN=1
           -DDYNARMIC_USE_LLVM=1
-          -DLIBUNICORN_INCLUDE_DIR=${{github.workspace}}/externals/unicorn/include
-          -DLIBUNICORN_LIBRARY=${{github.workspace}}/externals/unicorn/libunicorn.a
+        # -DLIBUNICORN_INCLUDE_DIR=${{github.workspace}}/externals/unicorn/include
+        # -DLIBUNICORN_LIBRARY=${{github.workspace}}/externals/unicorn/libunicorn.a
           -G Ninja
 
       - name: Configure CMake
