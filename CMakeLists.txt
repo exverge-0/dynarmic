@@ -105,7 +105,7 @@ else()
     endif()
 
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-        # GCC produces bogus -Warray-bounds and -Wno-stringop-overread warnings from xbyak headers
+        # GCC produces bogus -Warray-bounds and -Wstringop-overread warnings from xbyak headers
         # for code paths that are not actually reachable.  Specifically, it happens in cases where
         # some code casts an Operand& to Address& after first checking isMEM(), and that code is
         # inlined in a situation where GCC knows that the variable is actually a Reg64.  isMEM()
@@ -118,6 +118,11 @@ else()
         # Bracket depth determines maximum size of a fold expression in Clang since 9c9974c3ccb6.
         # And this in turns limits the size of a std::array.
         list(APPEND DYNARMIC_CXX_FLAGS -fbracket-depth=1024)
+    endif()
+
+    if ("riscv" IN_LIST ARCHITECTURE)
+        # biscuit's macros incorrectly adds a semicolon to their macros
+        list(APPEND DYNARMIC_CXX_FLAGS -Wno-pedantic)
     endif()
 endif()
 
