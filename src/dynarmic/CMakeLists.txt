@@ -267,6 +267,7 @@ if ("x86_64" IN_LIST ARCHITECTURE)
             xbyak::xbyak
             Zydis::Zydis
     )
+    target_compile_definitions(dynarmic PRIVATE XBYAK_STRICT_CHECK_MEM_REG_SIZE=0) # TODO
 
     target_architecture_specific_sources(dynarmic "x86_64"
         backend/x64/abi.cpp
@@ -507,7 +508,7 @@ target_link_libraries(dynarmic
         Boost::boost
         fmt::fmt
         merry::mcl
-        tsl::robin_map
+        $<BUILD_INTERFACE:tsl::robin_map>
 )
 if (DYNARMIC_USE_LLVM)
     target_include_directories(dynarmic PRIVATE ${LLVM_INCLUDE_DIRS})
