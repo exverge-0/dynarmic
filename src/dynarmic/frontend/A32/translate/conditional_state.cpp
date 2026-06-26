@@ -10,7 +10,7 @@
 
 #include <algorithm>
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/common/common_types.h"
 
 #include "dynarmic/frontend/A32/a32_ir_emitter.h"

@@ -3,10 +3,12 @@
  * SPDX-License-Identifier: 0BSD
  */
 
-#if defined(ARCHITECTURE_x86_64)
-#    include "dynarmic/backend/x64/mig/mach_exc_server.c"
-#elif defined(ARCHITECTURE_arm64)
-#    include "dynarmic/backend/arm64/mig/mach_exc_server.c"
+#include <dynarmic/mcl/architecture.hpp>
+
+#if defined(MCL_ARCHITECTURE_X86_64)
+#    include <mig/x64/mach_exc_server.c>
+#elif defined(MCL_ARCHITECTURE_ARM64)
+#    include <mig/arm64/mach_exc_server.c>
 #else
 #    error "Invalid architecture"
 #endif

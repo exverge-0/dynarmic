@@ -12,7 +12,7 @@
 #include <bit>
 
 #include "dynarmic/common/common_types.h"
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 
 namespace mcl {
 template<typename T>

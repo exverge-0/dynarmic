@@ -13,7 +13,7 @@
 
 #include <sys/mman.h>
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/common/common_types.h"
 
 namespace Dynarmic::Backend::RV64 {

@@ -5,7 +5,7 @@
 #include <mutex>
 
 #include <boost/icl/interval_set.hpp>
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/common/common_types.h"
 
 #include "dynarmic/frontend/A64/a64_location_descriptor.h"

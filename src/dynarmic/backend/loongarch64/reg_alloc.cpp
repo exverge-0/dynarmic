@@ -9,7 +9,7 @@
 
 #include "dynarmic/backend/loongarch64/lagoon_cpp.h"
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/common/common_types.h"
 
 #include "dynarmic/common/always_false.h"

@@ -8,7 +8,7 @@
 
 #include <utility>
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 
 #include "dynarmic/frontend/A64/translate/impl/impl.h"
 

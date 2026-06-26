@@ -21,13 +21,13 @@
 #include <fmt/format.h>
 #include <sys/mman.h>
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/common/common_types.h"
 #include "dynarmic/backend/exception_handler.h"
 #include "dynarmic/common/context.h"
-#if defined(ARCHITECTURE_x86_64)
+#if defined(MCL_ARCHITECTURE_X86_64)
 #    include "dynarmic/backend/x64/block_of_code.h"
-#elif defined(ARCHITECTURE_arm64)
+#elif defined(MCL_ARCHITECTURE_ARM64)
 #    include <oaknut/code_block.hpp>
 #    include "dynarmic/backend/arm64/abi.h"
 #elif defined(ARCHITECTURE_riscv64)
@@ -125,7 +125,7 @@ void RegisterHandler() {
 void SigHandler::SigAction(int sig, siginfo_t* info, void* raw_context) {
     DEBUG_ASSERT(sig == SIGSEGV || sig == SIGBUS);
     CTX_DECLARE(raw_context);
-#if defined(ARCHITECTURE_x86_64)
+#if defined(MCL_ARCHITECTURE_X86_64)
     {
         std::shared_lock guard(sig_handler->code_block_infos_mutex);
         if (auto const iter = sig_handler->FindCodeBlockInfo(CTX_PC); iter != sig_handler->code_block_infos.end()) {
@@ -137,7 +137,7 @@ void SigHandler::SigAction(int sig, siginfo_t* info, void* raw_context) {
         }
     }
     fmt::print(stderr, "Unhandled {} at rip {:#018x}\n", sig == SIGSEGV ? "SIGSEGV" : "SIGBUS", CTX_PC);
-#elif defined(ARCHITECTURE_arm64)
+#elif defined(MCL_ARCHITECTURE_ARM64)
     {
         std::shared_lock guard(sig_handler->code_block_infos_mutex);
         if (const auto iter = sig_handler->FindCodeBlockInfo(CTX_PC); iter != sig_handler->code_block_infos.end()) {
@@ -214,11 +214,11 @@ private:
 ExceptionHandler::ExceptionHandler() = default;
 ExceptionHandler::~ExceptionHandler() = default;
 
-#if defined(ARCHITECTURE_x86_64)
+#if defined(MCL_ARCHITECTURE_X86_64)
 void ExceptionHandler::Register(X64::BlockOfCode& code) {
     impl = std::make_unique<Impl>(std::bit_cast<u64>(code.getCode()), code.GetTotalCodeSize());
 }
-#elif defined(ARCHITECTURE_arm64)
+#elif defined(MCL_ARCHITECTURE_ARM64)
 void ExceptionHandler::Register(oaknut::CodeBlock& mem, std::size_t size) {
     impl = std::make_unique<Impl>(std::bit_cast<u64>(mem.ptr()), size);
 }

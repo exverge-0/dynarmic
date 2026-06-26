@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include "dynarmic/mcl/architecture.hpp"
+
 #ifdef __APPLE__
 #    include <signal.h>
 #    include <sys/ucontext.h>
@@ -34,7 +36,7 @@
 #    endif
 #endif
 
-#ifdef ARCHITECTURE_arm64
+#ifdef MCL_ARCHITECTURE_ARM64
 #   ifdef __OpenBSD__
 #       define CTX_DECLARE(raw_context) ucontext_t* ucontext = reinterpret_cast<ucontext_t*>(raw_context);
 #   else
@@ -62,14 +64,14 @@
 #   define CTX_PC (_UC_MACHINE_PC(ucontext))
 // NetBSD defines a redzone for SP but we don't require nor want that
 // ((uc)->uc_mcontext.__gregs[_REG_RSP] - 128) -> this is not desirable due to calcs
-#if defined(ARCHITECTURE_x86_64)
+#if defined(MCL_ARCHITECTURE_X86_64)
 #   define CTX_SP (mctx.__gregs[_REG_RSP])
 #else
 #   define CTX_SP (_UC_MACHINE_SP(ucontext))
 #endif
 #endif
 
-#if defined(ARCHITECTURE_arm64)
+#if defined(MCL_ARCHITECTURE_ARM64)
 #    if defined(__APPLE__)
 #        define CTX_PC (mctx->__ss.__pc)
 #        define CTX_SP (mctx->__ss.__sp)
@@ -108,7 +110,7 @@
 #    else
 #        error "unknown platform"
 #    endif
-#elif defined(ARCHITECTURE_x86_64)
+#elif defined(MCL_ARCHITECTURE_X86_64)
 #    if defined(__APPLE__)
 #        define CTX_PC (mctx->__ss.__rip)
 #        define CTX_SP (mctx->__ss.__rsp)
@@ -204,7 +206,7 @@
 #    error "unimplemented"
 #endif
 
-#ifdef ARCHITECTURE_arm64
+#ifdef MCL_ARCHITECTURE_ARM64
 #ifdef __APPLE__
 inline _STRUCT_ARM_NEON_STATE64* GetFloatingPointState(mcontext_t& host_ctx) {
     return &(host_ctx->__ns);

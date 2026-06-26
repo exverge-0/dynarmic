@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: 0BSD
  */
 
-#if defined(ARCHITECTURE_x86_64)
+#if defined(MCL_ARCHITECTURE_X86_64)
 #    include "dynarmic/backend/x64/exception_handler_windows.cpp"
-#elif defined(ARCHITECTURE_arm64)
+#elif defined(MCL_ARCHITECTURE_ARM64)
 #    include "dynarmic/backend/exception_handler_generic.cpp"
 #else
 #    error "Invalid architecture"

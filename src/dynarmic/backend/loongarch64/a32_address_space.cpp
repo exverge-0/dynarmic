@@ -3,7 +3,7 @@
 
 #include "dynarmic/backend/loongarch64/a32_address_space.h"
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 
 #include "dynarmic/backend/loongarch64/a32_jitstate.h"
 #include "dynarmic/backend/loongarch64/abi.h"

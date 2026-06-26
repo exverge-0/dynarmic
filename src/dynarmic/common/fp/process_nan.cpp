@@ -10,7 +10,7 @@
 
 #include <optional>
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/mcl/bit.hpp"
 
 #include "dynarmic/common/fp/fpcr.h"

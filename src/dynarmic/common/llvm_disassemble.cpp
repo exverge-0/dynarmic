@@ -14,7 +14,7 @@
 #    include <llvm-c/Target.h>
 #endif
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/common/common_types.h"
 
 #include "dynarmic/common/llvm_disassemble.h"

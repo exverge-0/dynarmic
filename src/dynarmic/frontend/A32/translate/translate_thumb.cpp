@@ -8,7 +8,7 @@
 
 #include <tuple>
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/mcl/bit.hpp"
 
 #include "dynarmic/frontend/A32/a32_ir_emitter.h"

@@ -8,7 +8,7 @@
 
 #include "dynarmic/common/fp/op/FPRoundInt.h"
 
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/mcl/bit.hpp"
 #include "dynarmic/common/common_types.h"
 

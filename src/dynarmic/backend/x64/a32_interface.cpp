@@ -12,7 +12,7 @@
 
 #include <boost/icl/interval_set.hpp>
 #include <fmt/format.h>
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include <bit>
 #include "dynarmic/common/common_types.h"
 #include "dynarmic/common/llvm_disassemble.h"

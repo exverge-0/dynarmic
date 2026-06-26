@@ -11,7 +11,7 @@
 #include <array>
 #include <tuple>
 #include <utility>
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/mcl/bit.hpp"
 
 namespace Dynarmic::Decoder {

@@ -3,6 +3,9 @@
 include(TargetArchitectureSpecificSources)
 
 add_library(dynarmic STATIC
+    mcl/architecture.hpp
+    mcl/assert.cpp
+    mcl/assert.hpp
     mcl/bit.hpp
     mcl/function_info.hpp
     mcl/integer_of_size.hpp
@@ -334,30 +337,31 @@ elseif (APPLE)
         message(STATUS "mach/mach_exc.defs location: ${MACH_EXC_DEFS_DIR}")
         execute_process(
             COMMAND
-                mkdir -p "${CMAKE_CURRENT_SOURCE_DIR}/backend/x64/mig"
+                mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64"
             COMMAND
                 mig
                 -arch x86_64
-                -user "${CMAKE_CURRENT_SOURCE_DIR}/backend/x64/mig/mach_exc_user.c"
-                -header "${CMAKE_CURRENT_SOURCE_DIR}/backend/x64/mig/mach_exc_user.h"
-                -server "${CMAKE_CURRENT_SOURCE_DIR}/backend/x64/mig/mach_exc_server.c"
-                -sheader "${CMAKE_CURRENT_SOURCE_DIR}/backend/x64/mig/mach_exc_server.h"
+                -user "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64/mach_exc_user.c"
+                -header "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64/mach_exc_user.h"
+                -server "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64/mach_exc_server.c"
+                -sheader "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/x64/mach_exc_server.h"
                 "${MACH_EXC_DEFS_DIR}/mach/mach_exc.defs"
             COMMAND_ERROR_IS_FATAL ANY
         )
         execute_process(
             COMMAND
-                mkdir -p "${CMAKE_CURRENT_SOURCE_DIR}/backend/arm64/mig"
+                mkdir -p "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64"
             COMMAND
                 mig
                 -arch arm64
-                -user "${CMAKE_CURRENT_SOURCE_DIR}/backend/arm64/mig/mach_exc_user.c"
-                -header "${CMAKE_CURRENT_SOURCE_DIR}/backend/arm64/mig/mach_exc_user.h"
-                -server "${CMAKE_CURRENT_SOURCE_DIR}/backend/arm64/mig/mach_exc_server.c"
-                -sheader "${CMAKE_CURRENT_SOURCE_DIR}/backend/arm64/mig/mach_exc_server.h"
+                -user "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64/mach_exc_user.c"
+                -header "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64/mach_exc_user.h"
+                -server "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64/mach_exc_server.c"
+                -sheader "${CMAKE_CURRENT_BINARY_DIR}/backend/mig/arm64/mach_exc_server.h"
                 "${MACH_EXC_DEFS_DIR}/mach/mach_exc.defs"
             COMMAND_ERROR_IS_FATAL ANY
         )
+        target_include_directories(dynarmic PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/backend")
         target_sources(dynarmic PRIVATE
             backend/exception_handler_macos.cpp
             backend/exception_handler_macos_mig.c
@@ -388,7 +392,7 @@ set_target_properties(dynarmic PROPERTIES
 target_compile_options(dynarmic PRIVATE ${DYNARMIC_CXX_FLAGS})
 
 target_link_libraries(dynarmic PRIVATE unordered_dense::unordered_dense)
-target_link_libraries(dynarmic PUBLIC fmt::fmt common)
+target_link_libraries(dynarmic PUBLIC fmt::fmt)
 
 if (BOOST_NO_HEADERS)
     target_link_libraries(dynarmic PRIVATE Boost::variant Boost::icl Boost::pool)

@@ -7,6 +7,7 @@ set(ARCHITECTURE "@ARCHITECTURE@")
 if (NOT @BUILD_SHARED_LIBS@)
     find_dependency(Boost 1.57)
     find_dependency(fmt 9)
+    find_dependency(unordered_dense)
     find_dependency(tsl-robin-map)
 
     if ("arm64" IN_LIST ARCHITECTURE)

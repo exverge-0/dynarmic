@@ -11,7 +11,7 @@
 #include <initializer_list>
 
 #include "dynarmic/common/common_types.h"
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include <oaknut/oaknut.hpp>
 
 

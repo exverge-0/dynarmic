@@ -9,7 +9,7 @@
 #include "dynarmic/common/fp/op/FPToFixed.h"
 
 #include <fmt/format.h>
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include "dynarmic/mcl/bit.hpp"
 #include "dynarmic/common/common_types.h"
 

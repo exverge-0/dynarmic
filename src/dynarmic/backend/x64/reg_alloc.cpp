@@ -13,7 +13,7 @@
 
 #include <fmt/ostream.h>
 #include "dynarmic/backend/x64/hostloc.h"
-#include "dynarmic/common/assert.h"
+#include "dynarmic/mcl/assert.hpp"
 #include <bit>
 #include "dynarmic/backend/x64/xbyak.h"
 

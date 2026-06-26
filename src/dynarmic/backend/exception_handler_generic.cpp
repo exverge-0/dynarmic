@@ -16,11 +16,11 @@ struct ExceptionHandler::Impl final {
 ExceptionHandler::ExceptionHandler() = default;
 ExceptionHandler::~ExceptionHandler() = default;
 
-#if defined(ARCHITECTURE_x86_64)
+#if defined(MCL_ARCHITECTURE_X86_64)
 void ExceptionHandler::Register(X64::BlockOfCode&) {
     // Do nothing
 }
-#elif defined(ARCHITECTURE_arm64)
+#elif defined(MCL_ARCHITECTURE_ARM64)
 void ExceptionHandler::Register(oaknut::CodeBlock&, std::size_t) {
     // Do nothing
 }
